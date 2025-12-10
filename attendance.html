@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Attendance Management</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    color: #0033cc;
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  header {
+    background-color: #e8e8e8;
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+  }
+  header h1 {
+    display: inline-block;
+    color: #4444aa;
+    margin: 0;
+    font-size: 24px;
+  }
+  
+  .container {
+    max-width: 1000px;
+    margin: 20px auto;
+    display: flex;
+    gap: 20px;
+    box-sizing: border-box;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    flex: 0 0 280px;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+  }
+  .sidebar input {
+    width: 100%;
+    padding: 5px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+  }
+  .sidebar table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  .sidebar th, .sidebar td {
+    border: 1px solid #ccc;
+    padding: 3px;
+  }
+  .sidebar th {
+    background: #4a4aff;
+    color: white;
+    font-weight: bold;
+  }
+  .sidebar td a {
+    color: #0033cc;
+    font-weight: bold;
+  }
+  .sidebar .today {
+    background: #ffd27f !important;
+    border-radius: 6px;
+  }
+  .sidebar .today a {
+    color: #000;
+    font-weight: bold;
+  }
+  .sidebar td:nth-child(1),
+  .sidebar td:nth-child(7) {
+    background: #fafafa;
+  }
+
+  .menuitem {
+    padding: 8px 0;
+    margin-top: 7px;
+    border-bottom: 1px solid #ccc;
+  }
+  
+  /* User Panel */
+  .user-panel {
+    display: flex;
+    align-items: center;
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+  }
+  .user-avatar img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #4a4aff;
+  }
+  .user-info {
+    margin-left: 12px;
+  }
+  .user-name {
+    font-size: 18px;
+    margin: 0;
+    font-weight: bold;
+    color: #3333aa;
+  }
+  .user-role {
+    margin: 4px 0 8px 0;
+    font-size: 13px;
+    color: #555;
+  }
+  .user-details p {
+    margin: 2px 0;
+    font-size: 13px;
+    color: #333;
+  }
+  .status {
+    font-weight: bold;
+    padding: 3px 6px;
+    border-radius: 4px;
+    color: white;
+    font-size: 12px;
+  }
+  .status.present {
+    background: #28a745;
+  }
+  .status.absent {
+    background: #dc3545;
+  }
+  .status.late {
+    background: #ff9800;
+  }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    min-width: 300px;
+  }
+  .main h3 {
+    color: #3333aa;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+  }
+
+  /* Rightbar */
+  .rightbar {
+    flex: 0 0 220px;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    font-size: 14px;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    color: #333;
+    font-family: Arial, sans-serif;
+    min-width: 180px;
+  }
+  .rightbar h4 {
+    color: #3333aa;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    font-weight: bold;
+  }
+  .rightbar ul {
+    list-style: disc inside;
+    padding-left: 0;
+    margin-bottom: 20px;
+  }
+  .rightbar ul li {
+    margin-bottom: 8px;
+    font-weight: normal;
+    font-size: 13px;
+  }
+  .rightbar ul li::before {
+    content: "✔ ";
+    color: #4a4aff;
+    font-weight: bold;
+  }
+
+  /* Footer */
+  footer {
+    clear: both;
+    text-align: center;
+    font-size: 13px;
+    color: #555;
+    border-top: 1px solid #ccc;
+    padding: 10px;
+    margin-top: 20px;
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>ATTENDANCE MANAGER</h1>
+</header>
+
+
+<div class="container">
+  <div class="sidebar">
+   
+
+    <!-- User Panel -->
+    <div class="user-panel">
+      <div class="user-avatar">
+        <img src="https://www.rawpixel.com/search/student%20cartoon%20girl" />
+      </div>
+      <div class="user-info">
+        <h3 class="user-name"> Student name</h3>
+        <p class="user-role">Student / Grade 10</p>
+        <div class="user-details">
+          <p><strong>ID:</strong> 10234</p>
+          <p><strong>Department:</strong> Computer Science</p>
+          <p><strong>Status Today:</strong> <span class="status present">Present</span></p>
+        </div>
+      </div>
+    </div>
+
+    <table>
+      <tr><th>S</th><th>M</th><th>T</th><th>W</th><th>T</th><th>F</th><th>S</th></tr>
+      <tr>
+        <td><a href="#">1</a></td>
+        <td><a href="#">2</a></td>
+        <td><a href="#">3</a></td>
+        <td><a href="#">4</a></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <td>5</td>
+        <td>6</td>
+        <td>7</td>
+        <td>8</td>
+        <td><a href="#">9</a></td>
+        <td class="today"><a href="#">10</a></td>
+        <td><a href="#">11</a></td>
+      </tr>
+      <tr>
+        <td><a href="#">12</a></td>
+        <td><a href="#">13</a></td>
+        <td><a href="#">14</a></td>
+        <td><a href="#">15</a></td>
+        <td><a href="#">16</a></td>
+        <td><a href="#">17</a></td>
+        <td><a href="#">18</a></td>
+      </tr>
+      <tr>
+        <td><a href="#">19</a></td>
+        <td><a href="#">20</a></td>
+        <td><a href="#">21</a></td>
+        <td><a href="#">22</a></td>
+        <td><a href="#">23</a></td>
+        <td><a href="#">24</a></td>
+        <td><a href="#">25</a></td>
+      </tr>
+      <tr>
+        <td><a href="#">26</a></td>
+        <td><a href="#">27</a></td>
+        <td><a href="#">28</a></td>
+        <td><a href="#">29</a></td>
+        <td><a href="#">30</a></td>
+        <td><a href="#">31</a></td>
+        <td><a href="#">1</a></td>
+      </tr>
+    </table>
+
+    <div class="menuitem"></div>
+    <a href="c2.html">Attendance</a>
+    <div class="menuitem"></div>
+    <a href="c3.html">Scheduler</a>
+  </div>
+
+  <section class="main">
+    <div>
+     
+      <div class="course-schedule-container">
+    <h3>Current Semester Course Schedule</h3>
+
+    <div class="course-schedule-container">
+    
+
+    <table class="course-table">
+        <thead>
+            <tr>
+                <th>Course Code</th>
+                <th>Course Name</th>
+                <th>Instructor</th>
+                <th>Schedule</th>
+                <th>Attendance %</th>
+                </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>101</td>
+                <td>CN</td>
+                <td>Dr.Smith</td>
+                <td>M/W 12:00 PM - 1:00 PM</td>
+                <td class="attendance-metric present">95%</td>
+                </tr>
+            <tr>
+                <td>205</td>
+                <td>DS</td>
+                <td>Prof.Lee</td>
+                <td>T/Th 1:00 PM - 2:00 PM</td>
+                <td class="attendance-metric tardy">82%</td>
+                </tr>
+            <tr>
+                <td>150</td>
+                <td>PCS</td>
+                <td>Ms.Chen</td>
+                <td>M/W 2:00 PM - 3:30 PM</td>
+                <td class="attendance-metric warning">70%</td>
+                </tr>
+            
+            <tr>
+                <td>310</td>
+                <td>PP</td>
+                <td>Dr. Jones</td>
+                <td>T/Th 3:30 PM - 4:30 PM</td>
+                <td class="attendance-metric present">98%</td>
+                </tr>
+            
+            <tr>
+                <td>405</td>
+                <td>DB</td>
+                <td>Prof.Khan</td>
+                <td>T/F 4:30 PM - 5:30 PM</td>
+                <td class="attendance-metric warning">74%</td>
+                </tr>
+
+        </tbody>
+    </table>
+</div>
+            </tbody>
+    </table>
+</div>
+    </div>
+
+  </section>
+
+  <div class="rightbar">
+    <h4>Why Attendance Matters</h4>
+    <ul>
+      <li>Ensures accountability</li>
+      <li>Helps track discipline</li>
+      <li>Keeps records accurate</li>
+      <li>Supports performance evaluation</li>
+    </ul>
+
+    <h4>Features</h4>
+    <ul>
+      <li>Real-time attendance</li>
+      <li>Calendar visualization</li>
+      <li>Search by profile</li>
+      <li>Report generation</li>
+    </ul>
+  </div>
+</div>
+
+
+<footer></footer>
+
+</body>
+</html>
